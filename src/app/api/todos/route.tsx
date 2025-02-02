@@ -67,6 +67,8 @@ export async function PUT(request: NextRequest) {
     });
     return NextResponse.json(newTodo, { status: 201 });
   } catch (error) {
+    console.log(error);
+
     return NextResponse.json(
       { message: "Internal Server Error" },
       { status: 500 }
@@ -87,6 +89,8 @@ export async function DELETE(request: NextRequest) {
 
     return NextResponse.json("Supprimé avec succès!", { status: 201 });
   } catch (error) {
+    console.log(error);
+
     return NextResponse.json(
       { message: "Internal Server Error" },
       { status: 500 }

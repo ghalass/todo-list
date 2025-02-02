@@ -48,7 +48,7 @@ export default function Home() {
             toast.success("Ajouté avec succès!");
             break;
           case CRUD.UPDATE:
-            const res = await axios.put(`${url}`, currentTodo);
+            await axios.put(`${url}`, currentTodo);
             // console.log(currentTodo, res);
             toast.success("Modifié avec succès!");
             break;
@@ -66,6 +66,8 @@ export default function Home() {
         setTODO({ id: 0, task: "", description: "", status: false });
         setOperation(CRUD.ADD);
       } catch (error: any) {
+        console.log(error);
+
         if (error instanceof yup.ValidationError) {
           setError("");
           const errorObj: {
@@ -148,7 +150,6 @@ export default function Home() {
           setTODO={setTODO}
           handleSubmit={handleSubmit}
           formErrors={formErrors}
-          setFormErrors={setFormErrors}
         />
       </div>
       <div className="col-sm-8">

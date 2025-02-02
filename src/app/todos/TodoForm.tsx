@@ -18,7 +18,6 @@ function TodoForm({
   handleSubmit,
   setTODO,
   formErrors,
-  setFormErrors,
 }: {
   error: string;
   task: string;
@@ -36,9 +35,6 @@ function TodoForm({
   setStatus: React.Dispatch<React.SetStateAction<boolean>>;
   handleSubmit: () => void;
   setTODO: (todo: Todo) => void;
-  setFormErrors: React.Dispatch<
-    React.SetStateAction<{ task: string; description: string }>
-  >;
 }) {
   const handleNew = () => {
     setOperation(CRUD.ADD);
