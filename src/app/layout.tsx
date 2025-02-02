@@ -20,7 +20,7 @@ export default function RootLayout({
     <html lang="fr">
       <body>
         <Header />
-        <div className="container-fluid">{children}</div>
+        <div className="container-fluid ">{children}</div>
         <ToastContainer
           position="bottom-right"
           autoClose={3000}

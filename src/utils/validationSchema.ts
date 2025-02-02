@@ -1,24 +1,14 @@
 import { z } from "zod";
 
-export const createTodochema = z.object({
-  task: z
-    .string({
-      required_error: "task is required",
-      invalid_type_error: "task should be of type string",
-    })
-    .min(2, { message: "task must be more than 2 characters" })
-    .max(200, { message: "task must be less than 200 characters" }),
+import * as yup from "yup";
+import { fr } from "yup-locales";
+import { setLocale } from "yup";
+setLocale(fr);
 
-  description: z
-    .string({
-      required_error: "Description is required",
-      invalid_type_error: "Description should be of type string",
-    })
-    .min(10, { message: "Description must be more than 10 characters" }),
-  status: z.boolean({
-    required_error: "Status is required",
-    invalid_type_error: "Status should be of type string",
-  }),
+export const createTodoSchema = yup.object().shape({
+  task: yup.string().required().min(3),
+  description: yup.string().required().min(2),
+  status: yup.boolean(),
 });
 
 // // Create Article Schema

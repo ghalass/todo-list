@@ -17,6 +17,8 @@
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-toastify": "^11.0.3",
+    "yup": "^1.6.1",
+    "yup-locales": "^1.2.28",
     "zod": "^3.24.1"
   },
   "devDependencies": {
@@ -24,6 +26,7 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@types/yup": "^0.29.14",
     "eslint": "^9",
     "eslint-config-next": "15.1.6",
     "prisma": "^6.3.0",

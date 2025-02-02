@@ -1,3 +1,4 @@
+import { CRUD } from "@/utils/constants";
 import { Todo } from "@prisma/client";
 
 function TodoItem({
@@ -6,16 +7,16 @@ function TodoItem({
   setTODO,
 }: {
   todo: Todo;
-  setOperation: React.Dispatch<React.SetStateAction<string>>;
+  setOperation: React.Dispatch<React.SetStateAction<CRUD>>;
   setTODO: (todo: Todo) => void;
 }) {
   const handleEdit = (todo: Todo) => {
-    setOperation("update");
+    setOperation(CRUD.UPDATE);
     setTODO(todo);
   };
 
   const handleDelete = (todo: Todo) => {
-    setOperation("delete");
+    setOperation(CRUD.DELETE);
     setTODO(todo);
   };
 
@@ -33,19 +34,22 @@ function TodoItem({
           <span className="badge rounded-pill text-bg-warning">En attente</span>
         )}
       </td>
-      <td className="d-flex gap-1">
-        <button
+      <td className="d-flex gap-4">
+        <span
+          role="button"
           onClick={() => handleEdit(todo)}
-          className="btn btn-sm btn-outline-secondary"
+          className="text-secondary"
         >
-          E
-        </button>
-        <button
+          <i className="bi bi-pencil"></i>
+        </span>
+
+        <span
+          role="button"
           onClick={() => handleDelete(todo)}
-          className="btn btn-sm btn-outline-danger"
+          className="text-danger"
         >
-          D
-        </button>
+          <i className="bi bi-trash3"></i>
+        </span>
       </td>
     </tr>
   );

@@ -4,6 +4,13 @@ export interface CreateTodoDto {
   status: boolean;
 }
 
+export interface UpdateTodoDto {
+  id: number;
+  task: string;
+  description?: string;
+  status: boolean;
+}
+
 // // Article
 // export interface CreateArticleDto {
 //   title: string;

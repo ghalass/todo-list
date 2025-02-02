@@ -1,12 +1,15 @@
 "use client";
 
-import { DELAY, DOMAIN } from "@/utils/constants";
+import { CRUD, DELAY, DOMAIN } from "@/utils/constants";
 import { Todo } from "@prisma/client";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import TodosList from "./TodosList";
 import TodoForm from "./TodoForm";
 import { toast } from "react-toastify";
+import { createTodoSchema } from "@/utils/validationSchema";
+
+import * as yup from "yup";
 
 export default function Home() {
   const url = `${DOMAIN}/api/todos`;
@@ -14,12 +17,102 @@ export default function Home() {
   const [loading, setLoading] = useState(false);
   const [processing, setProcessing] = useState(false);
   const [error, setError] = useState("");
-  const [operation, setOperation] = useState("add");
+  const [operation, setOperation] = useState(CRUD.ADD);
+
+  const [formErrors, setFormErrors] = useState({
+    task: "",
+    description: "",
+  });
 
   const [id, setId] = useState(0);
   const [task, setTask] = useState("");
   const [description, setDescription] = useState("");
   const [status, setStatus] = useState(false);
+
+  const handleSubmit = async () => {
+    setProcessing(true);
+    setTimeout(async () => {
+      const currentTodo = {
+        id: id,
+        task: task,
+        description: description,
+        status: status,
+      };
+      try {
+        await createTodoSchema.validate(currentTodo, { abortEarly: false });
+
+        setProcessing(true);
+        switch (operation) {
+          case CRUD.ADD:
+            await axios.post(`${url}`, currentTodo);
+            toast.success("Ajouté avec succès!");
+            break;
+          case CRUD.UPDATE:
+            const res = await axios.put(`${url}`, currentTodo);
+            // console.log(currentTodo, res);
+            toast.success("Modifié avec succès!");
+            break;
+          case CRUD.DELETE:
+            await axios.delete(`${url}?id=${currentTodo.id}`);
+            toast.info("Supprimé avec succès!");
+            break;
+          case CRUD.SHOW:
+            break;
+          default:
+            break;
+        }
+        loadDATA();
+        setError("");
+        setTODO({ id: 0, task: "", description: "", status: false });
+        setOperation(CRUD.ADD);
+      } catch (error: any) {
+        if (error instanceof yup.ValidationError) {
+          setError("");
+          const errorObj: {
+            task?: string;
+            description?: string;
+            status?: boolean;
+          } = error.inner.reduce(
+            (
+              acc: Record<string, string>,
+              currentError: yup.ValidationError
+            ) => {
+              acc[currentError.path!] = currentError.message;
+              return acc;
+            },
+            {}
+          );
+          setFormErrors({
+            task: errorObj?.task || "",
+            description: errorObj?.description || "",
+          });
+        } else {
+          setFormErrors({
+            task: "",
+            description: "",
+          });
+          // console.log(error);
+          setError(error?.response?.data?.message);
+          toast.error(error?.response?.data?.message);
+        }
+      } finally {
+        setProcessing(false);
+      }
+      setProcessing(false);
+    }, DELAY);
+  };
+
+  const setTODO = (todo: Todo) => {
+    setId(todo.id);
+    setTask(todo.task);
+    setDescription(todo.description || "");
+    setStatus(todo.status);
+    setError("");
+    setFormErrors({
+      task: "",
+      description: "",
+    });
+  };
 
   const loadDATA = async () => {
     setLoading(true);
@@ -33,92 +126,6 @@ export default function Home() {
     }, DELAY);
   };
 
-  const handleSubmit = () => {
-    setProcessing(true);
-    setTimeout(async () => {
-      const data = {
-        id: id,
-        task: task,
-        description: description,
-        status: status,
-      };
-      try {
-        setProcessing(true);
-        console.log("data:", data);
-        switch (operation) {
-          case "add":
-            const res = await axios.post(`${url}`, data);
-            toast.success("Ajouté avec succès!");
-            break;
-          case "update":
-            break;
-          case "delete":
-            const del_res = await axios.delete(`${url}?id=${data.id}`);
-            toast.info("Supprimé avec succès!");
-            break;
-          default:
-            break;
-        }
-
-        loadDATA();
-        setError("");
-        setTask("");
-        setDescription("");
-        setStatus(false);
-        setOperation("add");
-      } catch (error: any) {
-        setError(error?.response?.data.message);
-        // toast.error(error?.response?.data.message);
-      } finally {
-        setProcessing(false);
-      }
-      setProcessing(false);
-    }, DELAY);
-  };
-
-  const handleNew = () => {
-    setOperation("add");
-    const todo = {
-      id: 0,
-      task: "",
-      description: "",
-      status: false,
-    };
-    setTODO(todo);
-  };
-  const setTODO = (todo: Todo) => {
-    setError("");
-    setId(todo.id);
-    setTask(todo.task);
-    setDescription(todo.description || "");
-    setStatus(todo.status);
-  };
-  const setButtonTitle = () => {
-    let title = "";
-    let cls = "success";
-    let icon = "bi-plus-lg";
-    switch (operation) {
-      case "add":
-        title = "Ajouter";
-        cls = "success";
-        icon = "bi-plus-lg";
-        break;
-      case "update":
-        title = "Modifier";
-        cls = "secondary";
-        icon = "bi-pencil";
-        break;
-      case "delete":
-        title = "Supprimer";
-        cls = "danger";
-        icon = "bi-trash3";
-        break;
-      default:
-        break;
-    }
-    return { title, cls, icon };
-  };
-
   useEffect(() => {
     loadDATA();
   }, []);
@@ -127,28 +134,35 @@ export default function Home() {
     <div className="m-2">
       {/* CRUD */}
 
+      {/* <div className="card">
+        <div className="card-header">Featured</div>
+        <div className="card-body"></div>
+      </div> */}
+
       <TodoForm
         error={error}
         task={task}
+        setTask={setTask}
         description={description}
+        setDescription={setDescription}
         status={status}
+        setStatus={setStatus}
         processing={processing}
         operation={operation}
-        setTask={setTask}
-        setDescription={setDescription}
-        setStatus={setStatus}
-        setButtonTitle={setButtonTitle}
+        setOperation={setOperation}
+        setTODO={setTODO}
         handleSubmit={handleSubmit}
-        handleNew={handleNew}
+        formErrors={formErrors}
+        setFormErrors={setFormErrors}
       />
 
       {/* LIST */}
-
       <TodosList
         todos={todos}
         loading={loading}
         setOperation={setOperation}
         setTODO={setTODO}
+        loadDATA={loadDATA}
       />
     </div>
   );

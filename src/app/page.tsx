@@ -5,6 +5,7 @@ export default function HomePage() {
     <div>
       <i className="bi bi-house"></i>
       Home Page
+      <i className="bi bi-plus-lg"></i>
     </div>
   );
 }

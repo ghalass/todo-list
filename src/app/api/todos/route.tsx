@@ -1,20 +1,10 @@
 import prisma from "@/utils/db";
-import { CreateTodoDto } from "@/utils/dtos";
-import { createTodochema } from "@/utils/validationSchema";
-import { Todo } from "@prisma/client";
+import { CreateTodoDto, UpdateTodoDto } from "@/utils/dtos";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(request: NextRequest) {
   try {
     const body = (await request.json()) as CreateTodoDto;
-
-    const validation = createTodochema.safeParse(body);
-
-    if (!validation.success)
-      return NextResponse.json(
-        { message: validation.error.errors[0].message },
-        { status: 400 }
-      );
 
     const todo = await prisma.todo.findFirst({
       where: {
@@ -30,6 +20,43 @@ export async function POST(request: NextRequest) {
     }
 
     const newTodo = await prisma.todo.create({
+      data: {
+        task: body.task,
+        description: body.description,
+        status: body.status,
+      },
+    });
+    return NextResponse.json(newTodo, { status: 201 });
+  } catch (error) {
+    return NextResponse.json(
+      { message: "Internal Server Error" },
+      { status: 500 }
+    );
+  }
+}
+
+export async function PUT(request: NextRequest) {
+  try {
+    const body = (await request.json()) as UpdateTodoDto;
+
+    console.log(body);
+
+    const todo = await prisma.todo.findFirst({
+      where: {
+        id: { not: body.id },
+        task: body.task,
+      },
+    });
+
+    if (todo) {
+      return NextResponse.json(
+        { message: "Task existe déjà!" },
+        { status: 400 }
+      );
+    }
+
+    const newTodo = await prisma.todo.update({
+      where: { id: body.id },
       data: {
         task: body.task,
         description: body.description,
