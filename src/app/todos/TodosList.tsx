@@ -43,7 +43,7 @@ function TodosList({
       </div>
       <div className="card-body">
         <div className="d-flex flex-column gap-1">
-          <table className="table table-sm table-hover mx-1">
+          <table className="table table-sm table-hover mx-1 ">
             <thead>
               <tr>
                 <th>#</th>

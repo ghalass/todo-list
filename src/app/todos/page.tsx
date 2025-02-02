@@ -131,39 +131,36 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="m-2">
-      {/* CRUD */}
-
-      {/* <div className="card">
-        <div className="card-header">Featured</div>
-        <div className="card-body"></div>
-      </div> */}
-
-      <TodoForm
-        error={error}
-        task={task}
-        setTask={setTask}
-        description={description}
-        setDescription={setDescription}
-        status={status}
-        setStatus={setStatus}
-        processing={processing}
-        operation={operation}
-        setOperation={setOperation}
-        setTODO={setTODO}
-        handleSubmit={handleSubmit}
-        formErrors={formErrors}
-        setFormErrors={setFormErrors}
-      />
-
-      {/* LIST */}
-      <TodosList
-        todos={todos}
-        loading={loading}
-        setOperation={setOperation}
-        setTODO={setTODO}
-        loadDATA={loadDATA}
-      />
+    <div className="row m-2">
+      <div className="col-sm-4">
+        {/* CRUD */}
+        <TodoForm
+          error={error}
+          task={task}
+          setTask={setTask}
+          description={description}
+          setDescription={setDescription}
+          status={status}
+          setStatus={setStatus}
+          processing={processing}
+          operation={operation}
+          setOperation={setOperation}
+          setTODO={setTODO}
+          handleSubmit={handleSubmit}
+          formErrors={formErrors}
+          setFormErrors={setFormErrors}
+        />
+      </div>
+      <div className="col-sm-8">
+        {/* LIST */}
+        <TodosList
+          todos={todos}
+          loading={loading}
+          setOperation={setOperation}
+          setTODO={setTODO}
+          loadDATA={loadDATA}
+        />
+      </div>
     </div>
   );
 }

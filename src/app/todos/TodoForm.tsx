@@ -83,7 +83,13 @@ function TodoForm({
             value={task}
             onChange={(e) => setTask(e.target.value)}
           />
-          <span className="text-danger fst-italic">{formErrors.task}</span>
+          {formErrors.task !== "" && (
+            <span className="text-danger fst-italic">
+              <i className="bi bi-exclamation-circle me-1"></i>
+              {formErrors.task}
+            </span>
+          )}
+
           <textarea
             className={`form-control ${
               formErrors.description !== "" ? "is-invalid" : ""
@@ -92,9 +98,12 @@ function TodoForm({
             value={description}
             onChange={(e) => setDescription(e.target.value)}
           ></textarea>
-          <span className="text-danger fst-italic">
-            {formErrors.description}
-          </span>
+          {formErrors.description !== "" && (
+            <span className="text-danger fst-italic">
+              <i className="bi bi-exclamation-circle me-1"></i>
+              {formErrors.description}
+            </span>
+          )}
 
           <div className="d-flex gap-2">
             <div className="form-check">
