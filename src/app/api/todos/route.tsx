@@ -28,6 +28,8 @@ export async function POST(request: NextRequest) {
     });
     return NextResponse.json(newTodo, { status: 201 });
   } catch (error) {
+    console.log(error);
+
     return NextResponse.json(
       { message: "Internal Server Error" },
       { status: 500 }
@@ -94,6 +96,8 @@ export async function DELETE(request: NextRequest) {
 
 export async function GET(request: NextRequest) {
   try {
+    console.log(request);
+
     const todos = await prisma.todo.findMany();
 
     return NextResponse.json(todos, { status: 200 });
